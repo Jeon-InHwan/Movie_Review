@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.scit.movie.dao.ReviewMapper">
+
+
+<!-- 리뷰 작성 요청 (INSERT INTO) -->
+<insert id="writeReview" parameterType="review">
+INSERT INTO movie_review (
+	review_num
+	, review_title
+	, review_text
+	, user_id
+<if test="review_originalfile != null and review_savedfile != null">
+	, review_originalfile
+	, review_savedfile
+</if>
+) VALUES(
+	review_num_seq.nextval
+	, #{review_title}
+	, #{review_text}
+	, #{user_id}
+<if test="review_originalfile != null and review_savedfile != null">
+	, #{review_originalfile}
+	, #{review_savedfile}
+</if>
+)
+</insert>
+
+
+<!-- 리뷰 전체 목록 가져오기 -->
+<select id="listReviews" parameterType="map" resultType="review">
+SELECT
+	review_num
+	, review_title
+	, review_text
+	, review_hitcount
+	, TO_CHAR(review_indate, 'yyyy-MM-dd') AS review_indate	
+	, user_id
+FROM
+	movie_review
+WHERE
+	<choose>
+		<when test="searchItem == 'review_title'">review_title</when>
+		<when test="searchItem == 'user_id'">user_id</when>
+		<when test="searchItem == 'review_text'">review_text</when>
+	</choose>
+	LIKE '%' || #{searchWord} || '%'
+ORDER BY
+	review_num DESC
+</select>
+
+
+<!-- review_num을 기준으로, Joined 된 Review 가져오기 -->
+<select id="selectJoinedReview" parameterType="int" resultType="hashmap">
+SELECT
+	r.review_num as review_num
+	, r.review_title as review_title
+	, r.review_text as review_text
+	, r.review_hitcount as review_hitcount
+	, TO_CHAR(r.review_indate, 'yyyy-MM-dd') AS review_indate	
+	, r.user_id as user_id
+	, r.review_originalfile as review_originalfile
+	, r.review_savedfile as review_savedfile
+	, m.user_nm as user_nm
+	, m.photo as photo
+FROM
+	movie_review r, movie_member m
+WHERE
+	r.user_id = m.user_id
+AND
+	r.review_num = #{review_num}
+</select>
+
+
+<!-- review_num을 기준으로, 하나의 Review 가져오기 -->
+<select id="selectOneReview" parameterType="int" resultType="review">
+SELECT
+	review_num
+	, review_title
+	, review_text
+	, review_hitcount
+	, TO_CHAR(review_indate, 'yyyy-MM-dd') AS review_indate	
+	, user_id
+	, review_originalfile
+	, review_savedfile
+FROM
+	movie_review
+WHERE
+	review_num = #{review_num}
+</select>
+
+
+<!-- review 정보를 하나 가져오기 전에, 조회수 1을 상승시키기 -->
+<update id="updateHitcount" parameterType="int">
+UPDATE
+	movie_review
+SET
+	review_hitcount = review_hitcount + 1
+WHERE
+	review_num = #{review_num}
+</update>
+
+
+<!-- review 글 하나를 삭제  -->
+<delete id="deleteReview" parameterType="review">
+DELETE FROM
+	movie_review
+WHERE
+	review_num = #{review_num}
+AND
+	(user_id = #{user_id} OR #{manager} = 1)
+</delete>
+
+
+<!-- review 수정 요청 -->
+<update id="updateReview" parameterType="review">
+UPDATE
+	movie_review
+SET
+	review_title = #{review_title}
+	, review_text = #{review_text}
+	, review_indate = SYSDATE
+<if test="review_originalfile != null and review_savedfile != null">
+	, review_originalfile = #{review_originalfile}
+	, review_savedfile = #{review_savedfile}
+</if>
+WHERE
+	review_num = #{review_num}
+AND
+	(user_id = #{user_id} OR #{manager} = 1)
+</update>
+
+
+<!-- 게시판 전체 글 개수 세어오기 -->
+<select id="selectTotalCount" parameterType="map" resultType="int">
+SELECT
+	COUNT(*)
+FROM
+	movie_review
+WHERE
+	<choose>
+		<when test="searchItem == 'review_title'">review_title</when>
+		<when test="searchItem == 'user_id'">user_id</when>
+		<when test="searchItem == 'review_text'">review_text</when>
+	</choose>
+LIKE '%' || #{searchWord} || '%'
+</select>
+
+
+</mapper>

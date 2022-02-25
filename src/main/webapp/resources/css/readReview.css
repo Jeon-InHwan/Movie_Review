@@ -1,0 +1,180 @@
+@charset "UTF-8";
+
+
+div#picture {
+	opacity: 0.8;
+  	display: block;
+  	position: fixed;
+  	top: 0;
+  	left: 0;
+  	height: 100vh;
+	width : 100vw;
+	background-image: url("/resources/images/movie_01.jpg");
+	background-size:cover;
+	z-index: -1;
+}	
+
+
+/* navbar css 부분 시작 */
+
+li#firstLi {
+	margin-left: 70px;
+}
+
+li {
+	margin-left: 30px;
+}
+
+
+#firstUl li {
+	width: 160px;
+	margin: 0 auto;
+}
+
+#firstUl li a.dropdown-item {
+	width: 160px;
+	margin: 0 auto;
+}
+
+#SecondUl li {
+	width: 160px;
+	margin: 0 auto;
+}
+
+#SecondUl li a.dropdown-item {
+	width: 160px;
+	margin: 0 auto;
+}
+
+/* navbar css 부분 종료 */
+
+
+
+/* 로그인된 유저 표시 css 시작 부분 */
+
+#dropdownId {
+	position: absolute;
+	right: 0;
+	top: 8.5px;
+	z-index: 100;
+}
+
+#userUl li {
+	width: 160px;
+	margin: 0 auto;
+}
+
+#userUl li a.dropdown-item {
+	width: 160px;
+	margin: 0 auto;
+}
+
+/* 로그인된 유저 표시 css 종료 부분 */
+
+
+
+#clock {
+	position: absolute;
+	right: 2px;
+	top: 56px;
+	font-size: 1.3em;
+	z-index: -1;
+}
+
+
+/* 테이블 관련 css 시작 부분 */
+
+div#tableDiv {
+	width: 1000px;
+	margin-top: 70px;
+}
+
+div#tableWrapper {
+	width: 1000px;
+	margin: 0 auto;
+}
+
+
+#reviewTable {
+	width: 1000px;
+	vertical-align: middle;
+}
+
+
+tr {
+	text-align: center;
+	vertical-align: middle;
+}
+
+th {
+	width: 150px;
+}
+
+td {
+	text-align: left;
+	vertical-align: middle;
+}
+
+#reviewTable tr .tdClass {
+	padding-left: 50px;
+}
+
+#preForText {
+	font-size: 16px;
+	overflow: auto;
+	white-space: pre-wrap;
+	font-family: sans-serif;
+	margin-bottom: 0px;
+}
+
+
+div#buttonDiv {
+	width: 1000px;
+	text-align: center;
+	margin: 0 auto;
+	margin-bottom: 50px;
+}
+
+div#buttonDiv input {
+	margin-top: 20px;
+	width: 210px;
+	margin-left: 15px;
+	margin-right: 15px;
+}
+
+/* 테이블 관련 css 종료 부분 */
+
+#backwardDiv {
+	display: inline-block;
+	width: auto;
+	height: 35px;
+	background-color: rgba(255,255,255,0.5);
+}
+
+#backwardDiv img {
+	widows: 35px;
+	height: 35px;
+
+}
+
+#backwardSpan {
+	font-weight: 600;
+	font-size: 1.3em;
+	vertical-align: middle;
+
+}
+
+.forMouseover {
+	cursor: pointer;
+}
+
+#fileName {
+	text-decoration: none;
+	font-weight: 700;
+}
+
+
+.profileImg {
+	width: 50px;
+	height: 50px;
+}

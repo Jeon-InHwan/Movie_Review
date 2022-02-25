@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.scit.movie.dao.MemberMapper">
+
+
+<!-- 회원가입 (insert) -->
+<insert id="join" parameterType="member">
+INSERT INTO movie_member (
+	user_id
+	, user_pwd
+	, user_nm
+	, photo
+) VALUES (
+	#{user_id}
+	, #{user_pwd}
+	, #{user_nm}
+	, #{photo}
+)
+</insert>
+
+
+<!-- 가입된 회원인지 확인하기 위해, 한 회원의 정보만을 DB에서 가져오기 -->
+<select id="selectMember" parameterType="string" resultType="member">
+SELECT
+	user_id
+	, user_pwd
+	, user_nm
+	, TO_CHAR(regdate, 'yyyy-MM-dd') AS regdate
+	, photo
+	, manager
+FROM
+	movie_member
+WHERE
+	user_id = #{user_id}
+</select>
+
+
+
+
+<!-- 실제 회원정보 업데이트 요청 -->
+<update id="updateMember" parameterType="member">
+UPDATE
+	movie_member
+SET
+	user_pwd = #{user_pwd}
+	, user_nm = #{user_nm}
+	, photo = #{photo}
+WHERE
+	user_id = #{user_id}
+</update>
+
+
+
+<!-- 실제 회원탈퇴 요청 : 사실 manager 항목을 3으로 바꾸는 물리적 삭제  -->
+<update id="deleteMember" parameterType="string">
+UPDATE
+	movie_member
+SET
+	manager = 3
+WHERE
+	user_id = #{user_id}
+</update>
+
+
+<!-- 관리자에 의한 Member 목록 요청 -->
+<select id="listMembers" parameterType="map" resultType="member">
+SELECT
+	user_id
+	, user_pwd
+	, user_nm
+	, TO_CHAR(regdate, 'yyyy-MM-dd') AS regdate
+	, photo
+	, manager
+FROM
+	movie_member
+WHERE
+	<choose>
+		<when test="searchItem == 'user_id'">user_id</when>
+		<when test="searchItem == 'user_nm'">user_nm</when>
+	</choose>
+	LIKE '%' || #{searchWord} || '%'
+AND
+	<choose>
+		<when test="searchStatus == 'all'">manager in(0,3)</when>
+		<when test="searchStatus == 0">manager = 0</when>
+		<when test="searchStatus == 3">manager = 3</when>
+	</choose>
+ORDER BY
+	user_id
+</select>
+
+
+<!-- paging 처리를 하기 위해 전체 회원 수를 DB에서 조회해오기 -->
+<select id="selectTotalCount" parameterType="map" resultType="int">
+SELECT
+	COUNT(*)
+FROM
+	movie_member
+WHERE
+	<choose>
+		<when test="searchItem == 'user_id'">user_id</when>
+		<when test="searchItem == 'user_nm'">user_nm</when>
+	</choose>
+	LIKE '%' || #{searchWord} || '%'
+AND
+	<choose>
+		<when test="searchStatus == 'all'">manager in(0,3)</when>
+		<when test="searchStatus == 0">manager = 0</when>
+		<when test="searchStatus == 3">manager = 3</when>
+	</choose>
+</select>
+
+
+<!-- 관리자에 의한 회원 비활성화 -->
+<update id="deactivateUser" parameterType="string">
+UPDATE
+	movie_member
+SET
+	manager = 3
+WHERE
+	user_id = #{user_id}
+</update>
+
+<!-- 관리자에 의한 회원 비활성화 -->
+<update id="activateUser" parameterType="string">
+UPDATE
+	movie_member
+SET
+	manager = 0
+WHERE
+	user_id = #{user_id}
+</update>
+
+
+
+</mapper>
